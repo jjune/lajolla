@@ -37,6 +37,10 @@ app.use('/places/search', function (req, res, next) {
           var longitude = coordinates[1];
           var serviceDetails;
          
+
+
+
+
           client.query("select array_to_json(array_agg(row_to_json(t))) as places from (select id, name,(select array_to_json(array_agg(row_to_json(ps))) from (select name, service_id, identifier from place_services inner join service_types on service_types.id = place_services.service_type_id where place_id = places.id) ps) as services from places where ST_CONTAINS(coordinates, ST_GeomFromText('POINT(" + longitude  + " " +  latitude + ")'))) t", null, function (err, results) {
 
             console.log(JSON.stringify(results));
