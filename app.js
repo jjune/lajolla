@@ -1,19 +1,18 @@
-require('./passport.js')
-
 var express = require('express');
 var app = express();
 var pg = require('pg');
+var localConfig = require('./config');
+var conString = "pg://" + localConfig.db_uid + ":" + localConfig.db_pwd + "@" + localConfig.db_address + "/" + localConfig.db_name;
+
+
 var client = new pg.Client(conString)
 var query_result;
 
 var server = app.listen(5000, function () {
-
-  var host = '10.132.195.26'
-  //var host = 'localhost';
-  //var host = server.address().address;
   var port = server.address().port;
-  console.log('Listening at http://%s:%s', host, port);
+  console.log('Listening at http://%s:%s', localConfig.host, port);
 });
+
 client.connect();
 
 
