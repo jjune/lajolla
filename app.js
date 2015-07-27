@@ -3,8 +3,6 @@ require('./passport.js')
 var express = require('express');
 var app = express();
 var pg = require('pg');
-//var conString = "pg://malibu:Plumtr33!!@localhost/malibu_development";
-var conString = "pg://joseph@localhost/malibu_development";
 var client = new pg.Client(conString)
 var query_result;
 
