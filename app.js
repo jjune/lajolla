@@ -1,15 +1,15 @@
 var express = require('express');
 var app = express();
 var pg = require('pg');
-//var conString = "pg://malibu:Plumtr33!!@localhost/malibu_development";
-var conString = "pg://joseph@localhost/malibu_development";
+var conString = "pg://malibu:Plumtr33!!@localhost/malibu_development";
+//var conString = "pg://joseph@localhost/malibu_development";
 var client = new pg.Client(conString)
 var query_result;
 
 var server = app.listen(5000, function () {
 
-  //var host = '10.132.195.26'
-  var host = 'localhost';
+  var host = '10.132.195.26'
+  //var host = 'localhost';
   //var host = server.address().address;
   var port = server.address().port;
   console.log('Listening at http://%s:%s', host, port);
@@ -18,7 +18,7 @@ client.connect();
 
 
 app.use(function (req, res, next) {
-  //console.log('Time:', Date.now());
+  console.log('Time:', Date.now());
   next();
 });
 
@@ -27,7 +27,7 @@ app.use(function (req, res, next) {
 app.use('/places/search', function (req, res, next) {
 
         var ll = req.query.ll;
-        var ac = req.query.a;
+       var ac = req.query.a;
 
         if (ll) {
           
@@ -36,10 +36,10 @@ app.use('/places/search', function (req, res, next) {
           var latitude = coordinates[0];
           var longitude = coordinates[1];
           var serviceDetails;
-          
-          client.query("select row_to_json(t) as places from (select id, name,(select array_to_json(array_agg(row_to_json(ps))) from (select name, service_id, identifier from place_services inner join service_types on service_types.id = place_services.service_type_id where place_id = places.id) ps) as services from places where ST_CONTAINS(coordinates, ST_GeomFromText('POINT(" + longitude + " " + latitude + ")'))) t", null, function (err, results) {
+         
+          client.query("select array_to_json(array_agg(row_to_json(t))) as places from (select id, name,(select array_to_json(array_agg(row_to_json(ps))) from (select name, service_id, identifier from place_services inner join service_types on service_types.id = place_services.service_type_id where place_id = places.id) ps) as services from places where ST_CONTAINS(coordinates, ST_GeomFromText('POINT(" + longitude  + " " +  latitude + ")'))) t", null, function (err, results) {
 
-            //console.log(JSON.stringify(results.rows[0]));
+            console.log(JSON.stringify(results));
 
             if (results.rowCount > 0) {
               
@@ -89,7 +89,7 @@ app.get('/services/:id', function (req, res, next) {
 
        if (results.rowCount > 0) {
 
-        res.send(JSON.stringify(results.rows[0]));
+        res.send(JSON.stringify(results.rows));
         res.end();
 
       } else {
@@ -106,5 +106,3 @@ app.get('/services/:id', function (req, res, next) {
 app.get('/user/:id', function (req, res, next) {
   res.send('USER');
 });  
-
-
